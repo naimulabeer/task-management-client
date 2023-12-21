@@ -56,13 +56,15 @@ function SignUp() {
 
         updateProfile(result.user, {
           displayName: name,
-          photoURL: "https://i.ibb.co/XLXXTYK/passport.jpg",
+          photoURL:
+            "https://www.pinkvilla.com/images/2023-08/804739091_screenshot-2023-08-22-184534.jpg",
         })
           .then(() => {
             const updatedUser = {
               ...result.user,
               displayName: name,
-              photoURL: "https://i.ibb.co/XLXXTYK/passport.jpg",
+              photoURL:
+                "https://www.pinkvilla.com/images/2023-08/804739091_screenshot-2023-08-22-184534.jpg",
             };
             setUser(updatedUser);
             setTimeout(() => {
