@@ -7,7 +7,7 @@ function Sidebar() {
   return (
     <div className="drawer lg:drawer-open">
       <input id="my-drawer-2" type="checkbox" className="drawer-toggle" />
-      <div className="drawer-content flex flex-col gap-2 justify-center">
+      <div className="drawer-content flex flex-col gap-2 justify-center ">
         {/* Page content here */}
 
         <label
@@ -27,7 +27,7 @@ function Sidebar() {
           className="drawer-overlay"
         ></label>
 
-        <ul className="menu p-4 w-80 min-h-full bg-base-200 text-base-content">
+        <ul className="menu p-4 w-80 min-h-full text-base-content">
           {/* Sidebar content here */}
 
           <div className="flex flex-col items-center gap-4">

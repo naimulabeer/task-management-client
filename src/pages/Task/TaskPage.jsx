@@ -1,10 +1,13 @@
+import AddTaskButton from "../../components/Task/AddTaskButton";
+import TaskShow from "../../components/Task/TaskShow";
+import { ToastContainer } from "react-toastify";
+
 function TaskPage() {
   return (
-    <div className="mt-10">
-      <h1>
-        Here All the Tasks will be shown and also a add task button with update
-        del in each tasks will be shown.
-      </h1>
+    <div className="h-screen px-2 py-6 bg-[#bcc9ed]">
+      <ToastContainer />
+      <AddTaskButton />
+      <TaskShow />
     </div>
   );
 }
