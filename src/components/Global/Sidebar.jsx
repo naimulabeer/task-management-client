@@ -50,10 +50,10 @@ function Sidebar() {
           </li>
           <li className="mb-3">
             <NavLink
-              to="/dashboard/other"
+              to="/"
               className="text-black bg-slate-100 hover:text-gray-700 transition duration-300"
             >
-              Sidebar Item 2
+              Back to Home
             </NavLink>
           </li>
         </ul>

@@ -5,3 +5,32 @@
 :root {
   font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
 }
+
+::-webkit-scrollbar {
+  width: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background-color: #f5f5f5;
+}
+
+::-webkit-scrollbar-thumb {
+  background-color: #ff8c00;
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background-color: #ff9900;
+}
+
+.icon {
+  font-size: 50px;
+  color: rgba(255, 255, 255, 0.919);
+  border: 1px solid #666464;
+  padding: 8px;
+  transition: transform 0.3s;
+}
+
+.icon:hover {
+  transform: scale(1.1) translateY(-5px);
+}

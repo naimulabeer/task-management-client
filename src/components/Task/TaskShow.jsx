@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import axios from "axios";
+import { DragDropContext, Droppable, Draggable } from "react-beautiful-dnd";
 import TaskDetailsModal from "./TaskDetailsModal";
 
 function TaskShow() {
@@ -10,7 +11,9 @@ function TaskShow() {
   useEffect(() => {
     const fetchTasks = async () => {
       try {
-        const response = await axios.get("http://localhost:5000/tasks");
+        const response = await axios.get(
+          "https://task-management-server-liart.vercel.app/tasks"
+        );
         const { data } = response;
 
         const groupedTasks = data.reduce(
@@ -28,7 +31,7 @@ function TaskShow() {
     };
 
     fetchTasks();
-  }, []);
+  }, [tasks]);
 
   const openModal = (task) => {
     setSelectedTask(task);
@@ -53,73 +56,150 @@ function TaskShow() {
     });
   };
 
+  const getCount = (phase) => {
+    return tasks[phase].length;
+  };
+
   return (
-    <div className="mt-10 px-2 py-4 flex flex-col lg:flex-row justify-evenly">
-      {/* TODO List */}
-      <div className="">
-        <h3 className="font-bold mb-4">Todo</h3>
-        {tasks.todo.map((task) => (
-          <div
-            key={task._id}
-            className="block w-full mb-4 cursor-pointer"
-            onClick={() => openModal(task)}
-          >
-            <div className="w-[280px] first:my-5 rounded-lg bg-white text-[#635fc7] py-6 px-3 shadow-lg hover:text-[#635fc7]">
-              <h4 className="text-lg font-semibold mb-2">{task.title}</h4>
-              <span className="text-sm font-medium px-2 py-1 bg-blue-500 text-white rounded-md">
-                {task.priority}
-              </span>
-            </div>
-          </div>
-        ))}
-      </div>
+    <DragDropContext
+      // Update the onDragEnd function inside DragDropContext
+      onDragEnd={(result) => {
+        if (!result.destination) {
+          return; // Dragged outside of droppable area
+        }
 
-      {/* Ongoing List */}
-      <div className="">
-        <h3 className="text-lg font-bold mb-4">Ongoing</h3>
-        {tasks.ongoing.map((task) => (
-          <div
-            key={task._id}
-            className="block w-full mb-4 cursor-pointer dark:hover:text-[#635fc7]"
-            onClick={() => openModal(task)}
-          >
-            <div className="w-[280px] first:my-5 rounded-lg bg-white text-[#635fc7] py-6 px-3 shadow-lg hover:text-[#635fc7]">
-              <h4 className="text-lg font-semibold mb-2">{task.title}</h4>
-              <span className="text-sm font-medium px-2 py-1 bg-yellow-500 text-white rounded-md">
-                {task.priority}
-              </span>
-            </div>
-          </div>
-        ))}
-      </div>
+        const sourcePhase = result.source.droppableId;
+        const destinationPhase = result.destination.droppableId;
+        const movedTask = tasks[sourcePhase][result.source.index];
 
-      {/* Completed List */}
-      <div className="">
-        <h3 className="text-lg font-bold mb-4">Completed</h3>
-        {tasks.completed.map((task) => (
-          <div
-            key={task._id}
-            className="block w-full mb-4 cursor-pointer dark:hover:text-[#635fc7]"
-            onClick={() => openModal(task)}
-          >
-            <div className="w-[280px] first:my-5 rounded-lg bg-white text-[#635fc7] py-6 px-3 shadow-lg hover:text-[#635fc7]">
-              <h4 className="text-lg font-semibold mb-2">{task.title}</h4>
-              <span className="text-sm font-medium px-2 py-1 bg-green-500 text-white rounded-md">
-                {task.priority}
-              </span>
-            </div>
-          </div>
-        ))}
-      </div>
+        // Remove the task from the source phase
+        const updatedTasks = { ...tasks };
+        updatedTasks[sourcePhase] = tasks[sourcePhase].filter(
+          (task) => task._id !== movedTask._id
+        );
 
-      {/* Task Details Modal */}
-      <TaskDetailsModal
-        isOpen={isModalOpen}
-        onRequestClose={closeModal}
-        task={selectedTask}
-        onDelete={handleDelete}
-      />
-    </div>
+        // Insert the task into the destination phase
+        updatedTasks[destinationPhase] = [
+          ...tasks[destinationPhase].slice(0, result.destination.index),
+          movedTask,
+          ...tasks[destinationPhase].slice(result.destination.index),
+        ];
+
+        setTasks(updatedTasks);
+      }}
+    >
+      <div className="mt-10 px-2 py-4 flex flex-col lg:flex-row justify-evenly">
+        {/* TODO List */}
+        <Droppable droppableId="Todo">
+          {(provided) => (
+            <div ref={provided.innerRef} {...provided.droppableProps}>
+              <h3 className="text-lg font-bold mb-4">
+                👍 Todo ({getCount("todo")})
+              </h3>
+              {tasks.todo.map((task, index) => (
+                <Draggable key={task._id} draggableId={task._id} index={index}>
+                  {(provided) => (
+                    <div
+                      ref={provided.innerRef}
+                      {...provided.draggableProps}
+                      {...provided.dragHandleProps}
+                      className="block w-full mb-4 cursor-pointer"
+                      onClick={() => openModal(task)}
+                    >
+                      <div className="w-[280px] first:my-5 rounded-lg bg-white text-[#635fc7] py-6 px-3 shadow-lg hover:text-[#635fc7]">
+                        <h4 className="text-lg font-semibold mb-2">
+                          {task.title}
+                        </h4>
+                        <span className="text-sm font-medium px-2 py-1 bg-blue-500 text-white rounded-md">
+                          {task.priority}
+                        </span>
+                      </div>
+                    </div>
+                  )}
+                </Draggable>
+              ))}
+              {provided.placeholder}
+            </div>
+          )}
+        </Droppable>
+
+        {/* Ongoing List */}
+        <Droppable droppableId="Ongoing">
+          {(provided) => (
+            <div ref={provided.innerRef} {...provided.droppableProps}>
+              <h3 className="text-lg font-bold mb-4">
+                ☢ Ongoing ({getCount("ongoing")})
+              </h3>
+              {tasks.ongoing.map((task, index) => (
+                <Draggable key={task._id} draggableId={task._id} index={index}>
+                  {(provided) => (
+                    <div
+                      ref={provided.innerRef}
+                      {...provided.draggableProps}
+                      {...provided.dragHandleProps}
+                      className="block w-full mb-4 cursor-pointer dark:hover:text-[#635fc7]"
+                      onClick={() => openModal(task)}
+                    >
+                      <div className="w-[280px] first:my-5 rounded-lg bg-white text-[#635fc7] py-6 px-3 shadow-lg hover:text-[#635fc7]">
+                        <h4 className="text-lg font-semibold mb-2">
+                          {task.title}
+                        </h4>
+                        <span className="text-sm font-medium px-2 py-1 bg-yellow-500 text-white rounded-md">
+                          {task.priority}
+                        </span>
+                      </div>
+                    </div>
+                  )}
+                </Draggable>
+              ))}
+              {provided.placeholder}
+            </div>
+          )}
+        </Droppable>
+
+        {/* Completed List */}
+        <Droppable droppableId="Completed">
+          {(provided) => (
+            <div ref={provided.innerRef} {...provided.droppableProps}>
+              <h3 className="text-lg font-bold mb-4">
+                ✅ Completed ({getCount("completed")})
+              </h3>
+              {tasks.completed.map((task, index) => (
+                <Draggable key={task._id} draggableId={task._id} index={index}>
+                  {(provided) => (
+                    <div
+                      ref={provided.innerRef}
+                      {...provided.draggableProps}
+                      {...provided.dragHandleProps}
+                      className="block w-full mb-4 cursor-pointer dark:hover:text-[#635fc7]"
+                      onClick={() => openModal(task)}
+                    >
+                      <div className="w-[280px] first:my-5 rounded-lg bg-white text-[#635fc7] py-6 px-3 shadow-lg hover:text-[#635fc7]">
+                        <h4 className="text-lg font-semibold mb-2">
+                          {task.title}
+                        </h4>
+                        <span className="text-sm font-medium px-2 py-1 bg-green-500 text-white rounded-md">
+                          {task.priority}
+                        </span>
+                      </div>
+                    </div>
+                  )}
+                </Draggable>
+              ))}
+              {provided.placeholder}
+            </div>
+          )}
+        </Droppable>
+
+        {/* Task Details Modal */}
+        <TaskDetailsModal
+          isOpen={isModalOpen}
+          onRequestClose={closeModal}
+          task={selectedTask}
+          onDelete={handleDelete}
+        />
+      </div>
+    </DragDropContext>
   );
 }
 

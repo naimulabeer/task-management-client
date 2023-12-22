@@ -25,7 +25,9 @@ function TaskDetailsModal({
   const handleDelete = async () => {
     // Implement the delete logic
     try {
-      await axios.delete(`http://localhost:5000/tasks/${task._id}`);
+      await axios.delete(
+        `https://task-management-server-liart.vercel.app/tasks/${task._id}`
+      );
       onRequestClose();
       onDelete(task._id);
     } catch (error) {

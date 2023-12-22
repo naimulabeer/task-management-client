@@ -23,7 +23,10 @@ function AddTaskModal({ isOpen, onRequestClose }) {
   const onSubmit = async (data) => {
     const newData = { ...data, phase: "todo" };
     try {
-      await axios.post("http://localhost:5000/tasks", newData);
+      await axios.post(
+        "https://task-management-server-liart.vercel.app/tasks",
+        newData
+      );
       toast.success("Task added successfully!");
       onRequestClose();
     } catch (error) {
