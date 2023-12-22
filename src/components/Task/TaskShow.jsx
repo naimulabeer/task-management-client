@@ -31,7 +31,7 @@ function TaskShow() {
     };
 
     fetchTasks();
-  }, [tasks]);
+  }, []);
 
   const openModal = (task) => {
     setSelectedTask(task);
@@ -90,7 +90,7 @@ function TaskShow() {
     >
       <div className="mt-10 px-2 py-4 flex flex-col lg:flex-row justify-evenly">
         {/* TODO List */}
-        <Droppable droppableId="Todo">
+        <Droppable droppableId="todo">
           {(provided) => (
             <div ref={provided.innerRef} {...provided.droppableProps}>
               <h3 className="text-lg font-bold mb-4">
@@ -124,7 +124,7 @@ function TaskShow() {
         </Droppable>
 
         {/* Ongoing List */}
-        <Droppable droppableId="Ongoing">
+        <Droppable droppableId="ongoing">
           {(provided) => (
             <div ref={provided.innerRef} {...provided.droppableProps}>
               <h3 className="text-lg font-bold mb-4">
@@ -158,7 +158,7 @@ function TaskShow() {
         </Droppable>
 
         {/* Completed List */}
-        <Droppable droppableId="Completed">
+        <Droppable droppableId="completed">
           {(provided) => (
             <div ref={provided.innerRef} {...provided.droppableProps}>
               <h3 className="text-lg font-bold mb-4">
